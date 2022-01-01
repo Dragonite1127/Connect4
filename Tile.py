@@ -2,6 +2,7 @@ import pygame
 import Color
 import os
 import time
+
 """Tiles."""
 WHITE_TILE = pygame.image.load(os.path.join("assets", "white.png"))
 YELLOW_TILE = pygame.image.load(os.path.join("assets", "yellow.png"))
@@ -12,6 +13,9 @@ RED_TILE = pygame.image.load(os.path.join("assets", "red.png"))
 
 class Tile:
     def __init__(self, x, y):
+        """Color is first initialized to white, representing an
+        empty tile. The image is set to white. The x and y coordinates
+        of the tile are set."""
         self.color = Color.Colors.WHITE
         image = self.get_path()
         self.image = image
@@ -24,8 +28,10 @@ class Tile:
         return f"Tile Color: {Color.Colors.tostring(self.color)}"
 
     def __eq__(self, other):
+        """Returns true iff other is a Tile object and
+        the color of self and other are equal. """
         return isinstance(other, Tile) and \
-               self.color == other.color
+            self.color == other.color
 
     def get_path(self):
         """Returns the path of a tile specified
@@ -55,4 +61,3 @@ class Tile:
             self.image = self.get_path()
             time.sleep(0.1)
             self.rect = self.image.get_rect()
-

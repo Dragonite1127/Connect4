@@ -29,7 +29,6 @@ class AI:
         board = self.game.deep_copy()
         self.found_move = random.choice(board.legal_moves())
         self.moves[self.found_move] = -100
-        value = -1
         value = \
             self.minimax(board, AI.MAX_DEPTH, True, -AI.INFINITY, AI.INFINITY)
         legal_moves = self.game.legal_moves()
@@ -43,12 +42,12 @@ class AI:
 
     def minimax(self, board: Board, depth: int, maximizing_player: bool, alpha: int, beta: int):
         """Find a move from position BOARD and return its value, recording the
-        move found in self.found_move iff save_move. The move should have
+        move found in self.moves. The move should have
         maximal value or have value > BETA if maximizing_player,
         and minimal value or value < ALPHA if minimizing_player. Searches up
         to DEPTH levels. Searching at level 0 simply returns a static estimate
-        of the board value and does not set found_move. If the game is over on
-        board, does not set found_move. """
+        of the board value and does not add to self.moves. If the game is over on
+        board, does not add to self.moves. """
         win = board.check_win()
         if win == False or win.value != 0 or depth == 0 \
                 or len(board.legal_moves()) == 0:
@@ -125,7 +124,7 @@ class AI:
                 window = col_array[row: row + 4]
                 score += self.evaluate_window(window, player)
 
-        # Positive sloped diagonal score and # Negatively sloped diagonal
+        # Positive sloped diagonal score and Negatively sloped diagonal
         for row in range(6 - 3):
             for col in range(7 - 3):
                 window = [board.board[row + i][col + i] for i in range(4)]
@@ -135,7 +134,8 @@ class AI:
 
         return score
 
-    def evaluate_window(self, window: list, player: Color.Colors):
+    @staticmethod
+    def evaluate_window(window: list, player: Color.Colors):
         """Compares the number of pieces between player PLAYER and
         the opponent and delegates the appropriate score. """
         score = 0

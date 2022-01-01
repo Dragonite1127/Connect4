@@ -14,7 +14,7 @@ class Board:
         self.moves = 0
         self.player1 = player1
         self.player2 = player2
-        self.screen = None  # set manually in main,
+        self.screen = None  # set manually in main
 
     def __str__(self):
         """Returns the string representation of the board."""
@@ -56,7 +56,8 @@ class Board:
                 board_copy.board[row][col].rect = self.board[row][col].rect
         return board_copy
 
-    def init_board(self):
+    @staticmethod
+    def init_board():
         """Initializes a game board."""
         width = 7
         height = 6
@@ -81,7 +82,6 @@ class Board:
         """Returns true iff a tile is empty at
         ROW COL. """
         return self.board[row][col].color == Color.Colors.WHITE
-
 
     def legal_moves(self):
         """Returns a list of tuples (row, column) containing
