@@ -6,18 +6,20 @@ import random
 
 
 class AI:
-    MAX_DEPTH = 3
+    MAX_DEPTH = 2
     INFINITY = 10000000000000000000000000
 
     def __init__(self, game: Board, color: Color.Colors):
         self.game = game
         self.color = color
         self.found_move = (-1, 0)
+        self.moves = {}
 
     def get_move(self):
         """Returns the move that the AI will make in
         this Connect 4 game."""
         assert self.color == self.game.whose_move()
+        self.moves = {}
         choice = self.search_for_move()
         return choice
 
@@ -26,10 +28,18 @@ class AI:
         assert self.game.whose_move() == self.color
         board = self.game.deep_copy()
         self.found_move = random.choice(board.legal_moves())
+        self.moves[self.found_move] = -100
         value = -1
         value = \
             self.minimax(board, AI.MAX_DEPTH, True, -AI.INFINITY, AI.INFINITY)
-        return self.found_move
+        legal_moves = self.game.legal_moves()
+        moves_to_delete = []
+        for elem in self.moves.keys():
+            if elem not in legal_moves:
+                moves_to_delete.append(elem)
+        for elem in moves_to_delete:
+            del self.moves[elem]
+        return max(self.moves, key=self.moves.get)
 
     def minimax(self, board: Board, depth: int, maximizing_player: bool, alpha: int, beta: int):
         """Find a move from position BOARD and return its value, recording the
@@ -42,7 +52,7 @@ class AI:
         win = board.check_win()
         if win == False or win.value != 0 or depth == 0 \
                 or len(board.legal_moves()) == 0:
-            return self.static_eval(board, win, board.whose_move())
+            return self.static_eval(board, win)
         elif maximizing_player:
             value = -AI.INFINITY
             moves = board.legal_moves()
@@ -52,6 +62,7 @@ class AI:
                 score = self.minimax(board_copy, depth - 1, False, alpha, beta)
                 if score > value:
                     value = score
+                    self.moves[move] = score
                     self.found_move = move
                     alpha = max(alpha, value)
                     if alpha >= beta:
@@ -68,13 +79,14 @@ class AI:
                 score = self.minimax(board_copy, depth - 1, True, alpha, beta)
                 if score < value:
                     value = score
+                    # self.moves[move] = score
                     self.found_move = move
                     beta = min(beta, value)
                     if alpha >= beta:
                         break
             return value
 
-    def static_eval(self, board, win, player: Color.Colors):
+    def static_eval(self, board, win):
         """Returns a heuristic estimate of the value
         of board position B. """
         if isinstance(win, bool):  # game ends in a draw
@@ -84,7 +96,7 @@ class AI:
         elif win.value == Color.Colors.opposite(self.color).value:
             return -100000000000000000000
         else:
-            score = self.score_position(board, player)
+            score = self.score_position(board, self.color)
             return score
 
     def score_position(self, board: Board, player: Color.Colors):
