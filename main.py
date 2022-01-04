@@ -277,12 +277,12 @@ class screenUpdate:
         for i in range(0, 6):
             for j in range(0, 7):
                 tile = self.game.board[i][j]
-                SCREEN.blit(transform.scale(tile.get_path(), (WIDTH / 7, HEIGHT / 6)), (tile.y, tile.x))
+                self.screen.blit(transform.scale(tile.get_path(), (int(WIDTH / 7), int(HEIGHT / 6))), (tile.y, tile.x))
                 pygame.display.update()
 
     def update_tile(self, row, col):
         """Updates a single tile. Used when swapping in the Board class."""
-        self.screen.blit(transform.scale(self.game.board[row][col].get_path(), (WIDTH / 7, HEIGHT / 6)),
+        self.screen.blit(transform.scale(self.game.board[row][col].get_path(), (int(WIDTH / 7), int(HEIGHT / 6))),
                          (col * TILE_SIZE, row * TILE_SIZE))
         pygame.display.update()
 
